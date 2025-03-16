@@ -1,106 +1,70 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import FileUpload from '@/components/FileUpload';
-import InstrumentSelector from '@/components/InstrumentSelector';
-import ProcessingStatus from '@/components/ProcessingStatus';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 export default function Home() {
-    const [darkMode, setDarkMode] = useState(false);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [selectedInstrument, setSelectedInstrument] = useState('');
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [processedFileUrl, setProcessedFileUrl] = useState<string | null>(null);
-
-    useEffect(() => {
-        // Check system preference for dark mode
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            setDarkMode(true);
-        }
-    }, []);
-
-    useEffect(() => {
-        // Apply dark mode class to document
-        document.documentElement.classList.toggle('dark', darkMode);
-    }, [darkMode]);
-
-    const handleSubmit = async () => {
-        if (!selectedFile || !selectedInstrument) return;
-
-        setIsProcessing(true);
-        setProcessedFileUrl(null);
-
-        // Create form data
-        const formData = new FormData();
-        formData.append('audio', selectedFile);
-        formData.append('instrument', selectedInstrument);
-
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            // In a real app, you would make an actual API call here
-            // const response = await fetch('/api/process', {
-            //   method: 'POST',
-            //   body: formData,
-            // });
-            // const data = await response.json();
-
-            // Simulate processed file URL
-            setProcessedFileUrl('dummy-processed-file.mp3');
-        } catch (error) {
-            console.error('Error processing file:', error);
-        } finally {
-            setIsProcessing(false);
-        }
-    };
-
-    const handleDownload = () => {
-        // In a real app, this would download the actual processed file
-        if (processedFileUrl) {
-            window.open(processedFileUrl, '_blank');
-        }
-    };
+    const { darkMode, toggleDarkMode } = useDarkMode();
 
     return (
-        <Layout darkMode={darkMode} onDarkModeToggle={() => setDarkMode(!darkMode)}>
-            <div className="max-w-2xl mx-auto">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                        Audio Separator
+        <Layout darkMode={darkMode} onDarkModeToggle={toggleDarkMode}>
+            <div className="max-w-4xl mx-auto px-4 py-8">
+                <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
+                    Welcome to Siren.ai
+                </h1>
+
+                <section className="mb-12">
+                    <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                        Enhance Your Musical Journey
                     </h2>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">
-                        Remove instruments from your audio files using AI
+                    <p className="text-lg mb-6 text-gray-600 dark:text-gray-300">
+                        Siren.ai is your ultimate companion for music practice and learning. Our advanced AI-powered tool helps musicians of all levels play along with their favorite songs by isolating specific instruments.
                     </p>
-                </div>
+                </section>
 
-                <div className="space-y-8">
-                    <FileUpload
-                        onFileSelect={setSelectedFile}
-                        selectedFile={selectedFile}
-                    />
+                <section className="mb-12">
+                    <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                        How It Works
+                    </h2>
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <div className="p-6 rounded-lg bg-gray-50 dark:bg-gray-800">
+                            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">
+                                Isolate Instruments
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300">
+                                Upload any song and separate it into individual instrument tracks. Practice with or without specific instruments to perfect your parts.
+                            </p>
+                        </div>
+                        <div className="p-6 rounded-lg bg-gray-50 dark:bg-gray-800">
+                            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200">
+                                Practice Effectively
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300">
+                                Remove the instrument you play to create the perfect backing track. Learn parts more easily by isolating specific instruments.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
-                    <InstrumentSelector
-                        selectedInstrument={selectedInstrument}
-                        onInstrumentChange={setSelectedInstrument}
-                    />
+                <section className="mb-12">
+                    <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                        Perfect For
+                    </h2>
+                    <ul className="list-disc pl-6 space-y-3 text-gray-600 dark:text-gray-300">
+                        <li>Musicians looking to practice with their favorite songs</li>
+                        <li>Music teachers creating educational materials</li>
+                        <li>Band members learning new parts</li>
+                        <li>Anyone wanting to study specific elements of a song</li>
+                    </ul>
+                </section>
 
-                    {selectedFile && selectedInstrument && !isProcessing && !processedFileUrl && (
-                        <button
-                            onClick={handleSubmit}
-                            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white 
-                           rounded-lg transition-colors focus:outline-none focus:ring-2 
-                           focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-                        >
-                            Process Audio
-                        </button>
-                    )}
-
-                    <ProcessingStatus
-                        isProcessing={isProcessing}
-                        processedFileUrl={processedFileUrl}
-                        onDownload={handleDownload}
-                    />
+                <div className="mt-8">
+                    <a
+                        href="/services"
+                        className="inline-flex items-center px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        Get Started with Audio Separation
+                    </a>
                 </div>
             </div>
         </Layout>
